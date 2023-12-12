@@ -1,0 +1,124 @@
+﻿@using Newtonsoft.Json;
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    #chart-container {
+        max-width: 800px; /* Adjust the maximum width as needed for larger screens */
+        margin: auto;
+        overflow-x: auto;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: auto;
+    }
+</style>
+
+<div id="chart-container">
+    <canvas id="barChart"></canvas>
+</div>
+
+<script>
+    // Function to update the chart with new data
+    function updateChart() {
+        fetch('/AdminM/BarChart', {
+            method: 'Get',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    console.log(response);
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(newData => {
+                var summarizedData = newData.reduce((accumulator, currentItem) => {
+                    if (currentItem.ApprovalStatus === 0) {
+                        accumulator.approved++;
+                    } else if (currentItem.ApprovalStatus === 1) {
+                        accumulator.rejected++;
+                    } else {
+                        accumulator.pending++;
+                    }
+                    return accumulator;
+                }, { approved: 0, rejected: 0, pending: 0 });
+
+                myChart.data.datasets[0].data = [summarizedData.approved, summarizedData.rejected, summarizedData.pending];
+
+                // Update the chart
+                myChart.update();
+            })
+            .catch(error => {
+                console.error('Error fetching new data:', error);
+            });
+    }
+
+    // Extract data from ViewBag
+    var chartData = @Html.Raw(JsonConvert.SerializeObject(ViewBag.ChartData));
+
+    // Parse the JSON data
+    var parsedData = JSON.parse(chartData);
+
+    // Summarize data for approved, rejected, and pending
+    var summarizedData = parsedData.reduce((accumulator, currentItem) => {
+        if (currentItem.ApprovalStatus === 0) {
+            accumulator.approved++;
+        } else if (currentItem.ApprovalStatus === 1) {
+            accumulator.rejected++;
+        } else {
+            accumulator.pending++;
+        }
+        return accumulator;
+    }, { approved: 0, rejected: 0, pending: 0 });
+
+    var labels = ['Approved', 'Rejected', 'Pending'];
+    var dataValues = [summarizedData.approved, summarizedData.rejected, summarizedData.pending];
+
+    var backgroundColors = [
+        'rgba(0, 0, 255, 0.6)', // Approved (blue)
+        'rgba(0, 128, 255, 0.6)', // Rejected (light blue)
+        'rgba(0, 64, 128, 0.6)'  // Pending (darker blue)
+    ];
+    var borderColor = 'rgba(0, 0, 255, 1)'; // Border color for all bars
+
+    var ctx = document.getElementById('barChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Approval Status',
+                data: dataValues,
+                backgroundColor: backgroundColors,
+                borderColor: borderColor,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 15,
+                        usePointStyle: true,
+                    }
+                }
+            }
+        }
+    });
+
+    updateChart();
+</script>
