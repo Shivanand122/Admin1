@@ -111,7 +111,9 @@ function saveComment(featureId) {
                         Swal.fire({
                             title: "Comment Added!",
                             text: "Your comment has been added.",
-                            icon: "success"
+                            icon: "success",
+                            timer: 2000,
+                            showConfirmButton: false
                         });
                     } else {
                         console.error('Failed to comment feature');
@@ -140,15 +142,15 @@ function acceptFeature(featureId) {
         if (result.isConfirmed) {
             if (acceptButton && acceptButton.innerText !== 'Approved') {
                 acceptButton.innerText = 'Approved';
-                acceptButton.classList.add('btn-success');
-                acceptButton.classList.remove('btn-primary');
+                acceptButton.classList.add('btn-outline-success');
+                acceptButton.classList.remove('btn-outline-primary');
             }
 
             if (rejectButton && rejectButton.innerText !== 'Reject') {
                 rejectButton.innerText = 'Reject';
                 rejectButton.classList.remove('d-none');
-                rejectButton.classList.remove('btn-danger');
-                rejectButton.classList.add('btn-primary');
+                rejectButton.classList.remove('btn-outline-danger');
+                rejectButton.classList.add('btn-outline-primary');
             }
 
             fetch(`/AdminM/AcceptFeature?featureId=${featureId}`, {
@@ -188,14 +190,14 @@ function rejectFeature(featureId) {
         if (result.isConfirmed) {
             if (rejectButton && rejectButton.innerText !== 'Rejected') {
                 rejectButton.innerText = 'Rejected';
-                rejectButton.classList.add('btn-danger');
-                rejectButton.classList.remove('btn-primary');
+                rejectButton.classList.add('btn-outline-danger');
+                rejectButton.classList.remove('btn-outline-primary');
             }
 
             if (acceptButton && acceptButton.innerText !== 'Accept') {
                 acceptButton.innerText = 'Accept';
-                acceptButton.classList.remove('btn-success');
-                acceptButton.classList.add('btn-primary');
+                acceptButton.classList.remove('btn-outline-success');
+                acceptButton.classList.add('btn-outline-primary');
             }
 
             fetch(`/AdminM/RejectFeature?featureId=${featureId}`, {

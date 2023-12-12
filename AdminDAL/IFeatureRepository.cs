@@ -6,7 +6,7 @@ namespace AdminDAL
 {
     public interface IFeatureRepository
     {
-        IEnumerable<Feature> GetAllFeatures();
+        IEnumerable<Feature> GetAllFeatures(string user);
         IEnumerable<Feature> GetAllAsync();
         Task<Feature> GetByIdAsync(int id);
         Task CreateAsync(Feature entity);

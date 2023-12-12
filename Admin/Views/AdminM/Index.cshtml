@@ -8,7 +8,6 @@
 
 
 
-
 @section scripts {
     <script>
         $(document).ready(function () {
@@ -55,12 +54,11 @@
             display: none; /* Safari and Chrome */
         }
 
-/* 
-    .split-view {
-        display: flex;
-        justify-content: space-between;
-    } */
-
+    /*
+        .split-view {
+            display: flex;
+            justify-content: space-between;
+        } */
 
 
     .feature-row {
@@ -70,7 +68,6 @@
         border: 1px solid #ccc;
         margin-bottom: 10px;
     }
-
 
 
     .features-section {
@@ -83,19 +80,20 @@
     }
 
     /* .feature-details-section {
-        flex-basis: 30%;
-        padding: 20px;
-        border-left: 1px solid #ccc;
-        overflow-y: auto; /* Add scroll for overflow content */
-    } */
+            flex-basis: 30%;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            overflow-y: auto; /* Add scroll for overflow content */
+    }
+
+    */
 
 
     .comment-box {
         border-top: 1px solid #ccc;
         width: 100px; /* Adjust width as needed */
         margin-top: -1px; /* Adjust margin as needed to align properly with preview-pane */
-        float:right;
-       
+        float: right;
     }
 
     .feature-details-popup {
@@ -113,8 +111,6 @@
         flex-direction: row;
         align-items: center;
     }
-
-
 
 
 
@@ -148,22 +144,22 @@
                 .table-responsive table thead th,
                 .table-responsive table tbody td {
                     padding: 8px;
-                    font-size: 12px; 
+                    font-size: 12px;
                 }
 
         .card-body {
-            padding: 0; 
+            padding: 0;
         }
 
         .search-container {
-            margin-bottom: 10px; 
+            margin-bottom: 10px;
         }
 
         .search-bar {
-            margin-bottom: 10px; 
+            margin-bottom: 10px;
         }
 
-        #externalPrintButton{
+        #externalPrintButton {
             display: none !important;
         }
     }
@@ -172,10 +168,10 @@
     .preview-pane {
         /* Your styles for the preview pane */
         position: fixed;
-        top: 60px; /* Adjust as needed */
+        top: 50px; /* Adjust as needed */
         right: 10px; /* Adjust as needed */
         width: 230px; /* Adjust width as needed */
-        height: 68%; /* Adjust height as needed */
+        height: 71%; /* Adjust height as needed */
         border: 1px solid #ccc;
         background-color: #f8f9fa;
         padding: 10px;
@@ -187,7 +183,7 @@
 
     .details-and-comment {
         position: fixed;
-        top: 78%;
+        top: 79%;
         left: 82.3%;
         display: flex;
         flex-direction: column;
@@ -223,119 +219,6 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="~/Admin.js"></script>
-
-
-
-
-
-<script>
-    // Function to update the chart with new data
-    // Function to update the chart with new data
-    function updateChart() {
-        fetch('/AdminM/Index', {
-            method: 'Get',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    console.log(response);
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(newData => {
-                var summarizedData = newData.reduce((accumulator, currentItem) => {
-                    if (currentItem.ApprovalStatus === 0) {
-                        accumulator.approved++;
-                    } else if (currentItem.ApprovalStatus === 1) {
-                        accumulator.rejected++;
-                    } else {
-                        accumulator.pending++;
-                    }
-                    return accumulator;
-                }, { approved: 0, rejected: 0, pending: 0 });
-
-                myChart.data.datasets[0].data = [summarizedData.approved, summarizedData.rejected, summarizedData.pending];
-
-                myChart.data.datasets[0].backgroundColor = [
-                    'rgba(0, 0, 145, 0.6)', // Approved (blue)
-                    'rgba(0, 128, 255, 0.6)', // Rejected (light blue)
-                    'rgba(0, 64, 128, 0.6)'  // Pending (darker blue)
-                ];
-
-                // Update the chart
-                myChart.update();
-            })
-            .catch(error => {
-                console.error('Error fetching new data:', error);
-            });
-    }
-
-
-
-    // Extract data from ViewBag
-    var chartData = @Html.Raw(JsonConvert.SerializeObject(ViewBag.ChartData));
-
-    // Parse the JSON data
-    var parsedData = JSON.parse(chartData);
-
-    // Summarize data for approved, rejected, and pending
-    var summarizedData = parsedData.reduce((accumulator, currentItem) => {
-        if (currentItem.ApprovalStatus === 0) {
-            accumulator.approved++;
-        } else if (currentItem.ApprovalStatus === 1) {
-            accumulator.rejected++;
-        } else {
-            accumulator.pending++;
-        }
-        return accumulator;
-    }, { approved: 0, rejected: 0, pending: 0 });
-
-    var labels = ['Approved', 'Rejected', 'Pending'];
-    var dataValues = [summarizedData.approved, summarizedData.rejected, summarizedData.pending];
-
-    var backgroundColors = [
-        'rgba(0, 0, 255, 0.6)', // Approved (blue)
-        'rgba(0, 128, 255, 0.6)', // Rejected (light blue)
-        'rgba(0, 64, 128, 0.6)'  // Pending (darker blue)
-    ];
-    var borderColor = 'rgba(0, 0, 255, 1)'; // Border color for all bars
-
-    var ctx = document.getElementById('barChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Approval Status',
-                data: dataValues,
-                backgroundColor: backgroundColors,
-                borderColor: borderColor,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            legend: {
-                display: true,
-                position: 'right',
-                labels: {
-                    boxWidth: 15,
-                    usePointStyle: true,
-                }
-            }
-        }
-    });
-
-    updateChart();
-</script>
-
 
 
 <script>
@@ -400,52 +283,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-    //   function loadFeatureDetails(featureId) {
-    //     // Get the preview pane element
-    //     const previewPane = document.getElementById('featurePreviewPane');
-
-    //     // Check if the preview pane is currently visible
-    //     const isVisible = window.getComputedStyle(previewPane).display !== 'none';
-
-    //     // If visible, hide the preview pane
-    //     if (isVisible) {
-    //         previewPane.style.display = 'none';
-    //     } else {
-    //         // If not visible, fetch and show the feature details
-    //         fetch(`/AdminM/FeatureDetails?featureId=${featureId}`)
-    //             .then(response => response.text())
-    //             .then(data => {
-    //                 // Update the content of the preview pane
-    //                 previewPane.innerHTML = data;
-
-    //                 // Show the preview pane
-    //                 previewPane.style.display = 'block';
-    //             })
-    //             .catch(error => {
-    //                 console.error('There was a problem with the fetch operation:', error);
-    //             });
-    //     }
-    // }
-
-
-    //     // Update the function that handles feature clicks to load details in the right section
-    //     function openFeatureDetails(featureId) {
-    //         // Highlight the selected feature if needed
-    //         // Optionally, you can add a CSS class to highlight the selected feature in the features list
-    //         // Example: $(`.feature-row[data-feature-id="${featureId}"]`).addClass('selected');
-
-    //         // Load feature details in the right section
-    //         loadFeatureDetails(featureId);
-    //     }
 </script>
 
 <!-- Modal for displaying changes preview -->
@@ -484,15 +321,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
 <div class="modal fade" id="featureDetailsModal" tabindex="-1" role="dialog" aria-labelledby="featureDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -519,13 +347,6 @@
 
 
 
-
-
-
-
-
-
-
 <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -537,7 +358,7 @@
             </div>
             <div class="modal-body">
                 <label for="commentTextArea">Comment:</label>
-                <textarea id="commentTextArea" class="form-control"></textarea>
+<textarea id="commentTextArea" class="form-control"></textarea>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="window.location.href=window.location.href;">
@@ -555,16 +376,13 @@
 </div>
 
 
-
 <input type="hidden" id="hiddenFeatureId" />
 
 
 @* <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
- *@
+*@
 <!-- Font Awesome CSS (assuming you are using Font Awesome for icons) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
-
 
 
 
@@ -582,7 +400,6 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
-
 
 
 <script>
@@ -625,11 +442,6 @@
 
 
 
-
-
-
-
-
 <div class="split-view">
     <!-- Left section for Features -->
     <div class="features-section">
@@ -644,10 +456,9 @@
         <div class="card">
             <div class="card-header text-center">
                 <h3>Feature List</h3>
-                
             </div>
 
-            
+
             @* <input type="text" id="externalSearchBox" placeholder="Search DataTable"> *@
             <div class="card-body">
                 <div class="container">
@@ -670,11 +481,9 @@
                         <div class="col-6 col-sm-2 text-center">
 
                             <feature name="AdminSide">
-                                <button id="externalPrintButton" class="btn btn-outline-primary btn-sm btn-block w-100 m-1">Download</button>      
+                                <button id="externalPrintButton" class="btn btn-outline-primary btn-sm btn-block w-100 m-1">Download</button>
                             </feature>
-                        
                         </div>
-                        
                     </div>
                 </div>
 
@@ -687,8 +496,8 @@
                                 <th>Feature Name</th>
                                 <th class="d-none d-sm-table-cell">Value </th>
                                 <th class="d-none d-sm-table-cell">User Name </th>
-                                <th > Approval status </th>
-                              @*   <th class="d-none d-sm-table-cell">Comment</th> *@
+                                <th> Approval status </th>
+                                @*   <th class="d-none d-sm-table-cell">Comment</th> *@
                             </tr>
                         </thead>
                         <tbody>
@@ -721,8 +530,8 @@
                                         @if (obj.ApprovalStatus == 2)
                                         {
                                             <div class="col-12 text-center">
-                                                <button type="button" class="btn btn-outline-primary btn-sm m-1" data-feature-id="@obj.FeatureId" onclick="acceptFeature(@obj.FeatureId)">Accept</button>
-                                                <button type="button" class="btn btn-outline-secondary btn-sm m-1" data-feature-id="@obj.FeatureId" onclick="rejectFeature(@obj.FeatureId)">Reject</button>
+                                                <button type="button" class="btn btn-outline-success btn-sm m-1" data-feature-id="@obj.FeatureId" onclick="acceptFeature(@obj.FeatureId)">Accept</button>
+                                                <button type="button" class="btn btn-outline-danger btn-sm m-1" data-feature-id="@obj.FeatureId" onclick="rejectFeature(@obj.FeatureId)">Reject</button>
                                             </div>
                                         }
                                         else if (obj.ApprovalStatus == 0)
@@ -731,12 +540,12 @@
                                         }
                                         else
                                         {
-                                            <span class="text-danger" >Rejected</span>
+                                            <span class="text-danger">Rejected</span>
                                         }
                                     </td>
                                     @* <td class="d-none d-sm-table-cell">
-                                        <button type="button" class="btn btn-info" onclick="openCommentBox(@obj.FeatureId)">Comment</button>
-                                    </td> *@
+                                <button type="button" class="btn btn-info" onclick="openCommentBox(@obj.FeatureId)">Comment</button>
+                                </td> *@
                                 </tr>
                             }
                         </tbody>
@@ -746,9 +555,7 @@
         </div>
 
 
-
     </div>
-
 
 
     <div class="details-and-comment">
@@ -766,11 +573,6 @@
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-<div style="width: 55%; margin: auto;">
-    <canvas id="barChart"></canvas>
-</div>
 
 
 <script>
@@ -817,7 +619,6 @@
                 console.error('Error fetching new data:', error);
             });
     }
-
 
 
     // Extract data from ViewBag

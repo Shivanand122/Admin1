@@ -1,9 +1,9 @@
-﻿using AdminDAL.Context;
-using AdminDAL.Entities2;
+﻿using AdminDAL.Entities2;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace AdminDAL.Repositories
@@ -88,9 +88,20 @@ namespace AdminDAL.Repositories
             }
         }
 
-        public IEnumerable<Feature> GetAllFeatures()
+        public IEnumerable<Feature> GetAllFeatures(string adminUserName)
         {
-            return _context.Features.Include(f => f.EntityNameNavigation).ToList();
+            // Fetch the associated Usernames from UserAdminRole for the provided adminUserName
+            var associatedUsernames = _context.UserAdminRoles
+                .Where(uar => uar.AdminUserName == adminUserName)
+                .Select(uar => uar.UserName)
+                .ToList();
+            Console.WriteLine(associatedUsernames);
+
+            // Retrieve Features based on associatedUsernames
+            return _context.Features
+                .Include(f => f.EntityNameNavigation)
+                .Where(f => associatedUsernames.Contains(f.UserName))
+                .ToList();
         }
     }
 }

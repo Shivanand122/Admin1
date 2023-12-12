@@ -5,7 +5,6 @@ using AdminDAL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using AdminDAL.Context;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +12,7 @@ using System.Text;
 using System.Configuration;
 using Newtonsoft.Json;
 using Microsoft.FeatureManagement;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace Admin.Controllers
 {
@@ -79,17 +79,18 @@ namespace Admin.Controllers
               return View();
           }
   */
-        
-        public async Task<IActionResult> Index()
-        {
 
+        [OutputCache(Duration = 6000)]
+        public async Task<IActionResult> Index(string username)
+        {
+            string name = username;
             List<Feature> chartdata = await GetChartData();
 
             string serializedata = Newtonsoft.Json.JsonConvert.SerializeObject(chartdata);
 
             ViewBag.ChartData = serializedata;
 
-            IEnumerable<Feature> features = _featureRepository.GetAllFeatures();
+            IEnumerable<Feature> features = _featureRepository.GetAllFeatures(name);
             // .Where(feature => feature.UserName == "User1")
 
             // Pass the features to the view
