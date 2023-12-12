@@ -304,8 +304,8 @@
 
                     if (data && data.token) {
 
-                        var identity = (ClaimsIdentity)User.Identity;
-                        identity.AddClaim(new Claim("Has2FA", "true"));
+                        // var identity = (ClaimsIdentity)User.Identity;
+                        // identity.AddClaim(new Claim("Has2FA", "true"));
 
                         localStorage.setItem('token', data.token);
 

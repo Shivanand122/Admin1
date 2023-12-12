@@ -212,7 +212,8 @@ namespace Admin.Controllers
                         {
                             case "accept":
 
-
+                                feature.ApprovalStatus = 0;
+                                _db.SaveChanges();
                                 // Assuming your Azure Function URL and payload format
                                 var functionUrl = "https://meshapp1.azurewebsites.net/api/FunctionApp1?code=lFcSH3N5USMOqD73vw9RHU4QviZFcRDnllLDtAmHkTonAzFu3CXKfA==";
 
@@ -225,7 +226,7 @@ namespace Admin.Controllers
                                     {
                                         // Azure Function triggered successfully
                                         // Handle any further logic after Azure Function invocation
-                                        feature.ApprovalStatus = 0;
+                                       
                                     }
                                     else
                                     {
